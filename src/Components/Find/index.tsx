@@ -4,13 +4,12 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  Text,
+  Easing,
   Animated,
   TextInput,
   LayoutChangeEvent,
 } from 'react-native';
 import Svg, {Path} from 'react-native-svg';
-import PropTypes from 'prop-types';
 
 interface ISearch {
   width: number;
@@ -25,16 +24,17 @@ interface IFindComponent {
   fontSize?: number;
   backgroundColor?: string;
   placeholderTextColor?: string;
+  refTextInput: any;
   searchIconSize?: number;
   searchIconColor?: string;
   focusAfterOpened?: boolean;
   shadowColor?: string;
   placeholder?: string;
-  animationSpeed?: [];
-  onOpened?: () => {};
-  onClosed?: () => {};
-  onOpening?: () => {};
-  onClosing?: () => {};
+  animationSpeed: number[];
+  onOpened?: any;
+  onClosed?: any;
+  onOpening?: any;
+  onClosing?: any;
 }
 
 const Find: React.FC<IFindComponent> = (props: IFindComponent) => {
@@ -46,22 +46,26 @@ const Find: React.FC<IFindComponent> = (props: IFindComponent) => {
     placeholderTextColor,
     shadowColor,
     placeholder,
+    searchIconSize,
+    searchIconColor,
+    onClosed,
+    onClosing,
+    refTextInput,
   } = props;
   const [state, setState] = useState<ISearch>({
     width: 0,
     textInputAnimated: new Animated.Value(0),
     parentViewWidthAnimated: new Animated.Value(height),
     isScaled: false,
-  } as ISearch);;
+  } as ISearch);
 
   const onLayout = (e: LayoutChangeEvent) => {
     const {width} = e.nativeEvent.layout;
     setState({...state, width: width});
-  };;
+  };
 
   //Icone de pesquisa
-  const SearchIcon = (props: any) => {
-    const {searchIconSize, searchIconColor} = props;
+  const SearchIcon = () => {
     return (
       <Svg viewBox="0 0 416 416" width={searchIconSize} height={searchIconSize}>
         <Path
@@ -81,56 +85,63 @@ const Find: React.FC<IFindComponent> = (props: IFindComponent) => {
         />
       </Svg>
     );
-  };;
+  };
 
   //Inicia a animação
-  const open = (props: any) => {
-    const {focusAfterOpened, animationSpeed, onOpened, onOpening} = props;
-    onOpening && onOpening();
+  const {focusAfterOpened, animationSpeed, onOpened, onOpening} = props;
 
-    Animated.timing(state.textInputAnimated, {
-      toValue: 1,
-      duration: animationSpeed[0],
-      easing: Easing.linear,
-    }).start(() => {
-      setTimeout(() => {
-        setState({...state, isScaled: true});
+  const actionContent = {
+    open: () => {
+      onOpening && onOpening();
 
-        Animated.timing(state.parentViewWidthAnimated, {
-          toValue: state.width,
-          duration: animationSpeed[1],
-          easing: Easing.linear,
-        }).start(() => {
-          onOpened && onOpened();
-          if (focusAfterOpened) {refTextInput.focus();}
-        });
-      }, 125);
-    });
-  };;
+      Animated.timing(state.textInputAnimated, {
+        toValue: 1,
+        duration: 200,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }).start(() => {
+        setTimeout(() => {
+          setState({...state, isScaled: true});
 
-  //Inicio da animação efeito de fechar
-  const close = (props: any) => {
-    const {animationSpeed, onClosed, onClosing} = props;
-    onClosing && onClosing();
+          Animated.timing(state.parentViewWidthAnimated, {
+            toValue: state.width,
+            duration: 250,
+            easing: Easing.linear,
+            useNativeDriver: true,
+          }).start(() => {
+            onOpened && onOpened();
+            if (focusAfterOpened) {
+              refTextInput.focus();
+            }
+          });
+        }, 125);
+      });
+    },
+    close: () => {
+      //Inicio da animação efeito de fechar
+      onClosing && onClosing();
 
-    Animated.timing(state.parentViewWidthAnimated, {
-      toValue: props.height,
-      duration: animationSpeed[1],
-      easing: Easing.linear,
-    }).start(() => {
-      setState({...state, isScaled: false});
+      Animated.timing(state.parentViewWidthAnimated, {
+        toValue: props.height,
+        duration: animationSpeed[1],
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }).start(() => {
+        setState({...state, isScaled: false});
 
-      setTimeout(() => {
-        Animated.timing(state.textInputAnimated, {
-          toValue: 0,
-          duration: animationSpeed[0],
-          easing: Easing.linear,
-        }).start(() => {
-          onClosed && onClosed();
-        });
-      }, 125);
-    });
-  };;
+        setTimeout(() => {
+          Animated.timing(state.textInputAnimated, {
+            toValue: 0,
+            duration: animationSpeed[0],
+            easing: Easing.linear,
+            useNativeDriver: true,
+          }).start(() => {
+            onClosed && onClosed();
+          });
+        }, 125);
+      });
+    },
+  };
 
   return (
     <View onLayout={onLayout} style={styles.container}>
@@ -143,7 +154,7 @@ const Find: React.FC<IFindComponent> = (props: IFindComponent) => {
               {scaleY: state.textInputAnimated},
             ],
             opacity: state.textInputAnimated,
-            width: state.parentViewWidthAnimated,,
+            width: state.parentViewWidthAnimated,
           },
         ]}>
         <TextInput
@@ -152,6 +163,7 @@ const Find: React.FC<IFindComponent> = (props: IFindComponent) => {
             state.isScaled ? placeholderTextColor : 'transparent'
           }
           placeholder={placeholder}
+          // eslint-disable-next-line no-sparse-arrays
           style={[
             styles.searchInput,
             {
@@ -161,7 +173,8 @@ const Find: React.FC<IFindComponent> = (props: IFindComponent) => {
               borderRadius: borderRadius,
               fontSize: fontSize,
               paddingLeft: height,
-            },,
+            },
+            ,
           ]}
         />
 
@@ -175,16 +188,16 @@ const Find: React.FC<IFindComponent> = (props: IFindComponent) => {
 
       {state.isScaled ? null : (
         <TouchableOpacity
-          onPress={open}
+          onPress={() => actionContent.open()}
           style={[
             styles.inputClosedSearchIcon,
             {width: height, height: height},
           ]}>
-          {searchIcon()}
+          {SearchIcon()}
         </TouchableOpacity>
       )}
     </View>
-  );;
+  );
 };
 
 const styles = StyleSheet.create({
@@ -228,23 +241,5 @@ Find.defaultProps = {
   shadowColor: 'rgba(0,0,0,0.12)',
   animationSpeed: [200, 250],
 };
-
-Find.propTypes = {
-  height: PropTypes.number,
-  borderRadius: PropTypes.number,
-  fontSize: PropTypes.number,
-  backgroundColor: PropTypes.string,
-  placeholderTextColor: PropTypes.string,
-  searchIconSize: PropTypes.number,
-  searchIconColor: PropTypes.string,
-  focusAfterOpened: PropTypes.bool,
-  shadowColor: PropTypes.string,
-  placeholder: PropTypes.string.isRequired,
-  animationSpeed: PropTypes.array,
-  onOpened: PropTypes.func,
-  onClosed: PropTypes.func,
-  onOpening: PropTypes.func,
-  onClosing: PropTypes.func
-}
 
 export default Find;

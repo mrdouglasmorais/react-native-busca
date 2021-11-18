@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import Find from './components/Find';
+import Find from './Components/Find';
 
 const App: React.FC = (props: any) => {
   console.log('props', props);
@@ -15,13 +15,8 @@ const App: React.FC = (props: any) => {
     searchIconColor: '#555',
   });
 
-  const refSearchBox = {
-    open: () => console.log('open'),
-    close: () => console.log('close'),
-  };
-
-  const openSearchBox = () => refSearchBox.open();
-  const closeSearchBox = () => refSearchBox.close();
+  const openSearchBox = () => console.log('open');
+  const closeSearchBox = () => console.log('close');
 
   useEffect(() => {
     openSearchBox();
@@ -31,13 +26,14 @@ const App: React.FC = (props: any) => {
     <View style={styles.container}>
       <ImageBackground
         style={styles.bgImage}
-        source={require('./assets/white.jpeg')}>
+        source={require('./Assets/Image/white.jpeg')}>
         <Find
-          ref={ref => (refSearchBox = ref)}
+          {...props}
+          ref={(ref: any) => console.log(ref)}
           placeholder={'Pesquisar...'}
           searchIconColor={state.searchIconColor}
-          onClosed={() => setState({searchIconColor: '#fff'})}
-          onOpening={() => setState({searchIconColor: '#555'})}
+          onClosed={() => setState({...state, searchIconColor: '#fff'})}
+          onOpening={() => setState({...state, searchIconColor: '#555'})}
         />
 
         <View style={styles.buttonsArea}>
@@ -67,7 +63,7 @@ const styles = StyleSheet.create({
   bgImage: {
     flex: 1,
     resizeMode: 'cover',
-    paddingTop: 15,
+    paddingTop: 45,
     paddingLeft: 15,
     paddingRight: 15,
   },
