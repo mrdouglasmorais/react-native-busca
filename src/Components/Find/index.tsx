@@ -1,3 +1,4 @@
+/* eslint-disable no-sparse-arrays */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
 import {
@@ -14,6 +15,7 @@ interface ISearch {
   textInputAnimation: any;
   parentViewedAnimation: any;
   iconSize?: number;
+  isScaled: boolean;
 }
 
 interface ISearchComponent {
@@ -22,10 +24,10 @@ interface ISearchComponent {
   borderRadius?: number;
   searchIconColor?: string;
   shadowColor?: string;
-  backgroundColor: string;
-  fontSize: number;
-  paddingLeft: number;
-  placeholder: string;
+  backgroundColor?: string;
+  fontSize?: number;
+  paddingLeft?: number;
+  placeholder?: string;
 }
 
 const Find: React.FC<ISearchComponent> = ({
@@ -40,8 +42,9 @@ const Find: React.FC<ISearchComponent> = ({
   const [search, setSearch] = useState<ISearch>({
     width: 0,
     textInputAnimation: new Animated.Value(1),
-    parentViewedAnimation: new Animated.Value(height),
+    parentViewedAnimation: new Animated.Value(400),
     iconSize: 40,
+    isScaled: true,
   });
 
   const onLayout = (event: LayoutChangeEvent) => {
@@ -86,11 +89,22 @@ const Find: React.FC<ISearchComponent> = ({
             width: search.parentViewedAnimation,
           },
         ]}>
-        <SearchIcon
-          style={styles.inputSearchIcon}
-          searchIconColorComponent="blue"
-          searchIconSize={search.iconSize}
-        />
+        {search.isScaled && (
+          <View
+            style={[
+              styles.inputSearchIcon,
+              {
+                width: height,
+                height: height,
+              },
+              ,
+            ]}>
+            {SearchIcon({
+              searchIconColorComponent: 'red',
+              searchIconSize: height - 40,
+            })}
+          </View>
+        )}
         <TextInput
           placeholderTextColor=""
           placeholder={placeholder}
@@ -141,6 +155,7 @@ Find.defaultProps = {
   backgroundColor: 'rgba(255,255,255,0.7)',
   fontSize: 18,
   paddingLeft: 22,
+  placeholder: '',
 };
 
 export default Find;

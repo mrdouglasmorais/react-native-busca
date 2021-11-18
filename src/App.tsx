@@ -17,7 +17,7 @@ const App: React.FC = () => {
         style={styles.imageBG}
         source={require('./Assets/Image/white.jpeg')}>
         <View style={styles.findComponent}>
-          <Find height={200} />
+          <Find height={200} placeholder="Texto para pesquisa" />
         </View>
         <View style={styles.buttonsArea}>
           <View style={styles.rows}>
