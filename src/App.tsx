@@ -1,31 +1,57 @@
-import React from 'react';
-
+import React, {useState, useEffect} from 'react';
 import {
-  View,
   Text,
+  View,
   StyleSheet,
   ImageBackground,
   TouchableOpacity,
 } from 'react-native';
 
-import Find from './Components/Find';
+import Find from './components/Find';
 
-const App: React.FC = () => {
+const App: React.FC = (props: any) => {
+  console.log('props', props);
+  const [state, setState] = useState({
+    searchIconColor: '#555',
+  });
+
+  const refSearchBox = {
+    open: () => console.log('open'),
+    close: () => console.log('close'),
+  };
+
+  const openSearchBox = () => refSearchBox.open();
+  const closeSearchBox = () => refSearchBox.close();
+
+  useEffect(() => {
+    openSearchBox();
+  }, []);
+
   return (
-    <View style={styles.default}>
+    <View style={styles.container}>
       <ImageBackground
-        style={styles.imageBG}
-        source={require('./Assets/Image/white.jpeg')}>
-        <View style={styles.findComponent}>
-          <Find height={200} placeholder="Texto para pesquisa" />
-        </View>
+        style={styles.bgImage}
+        source={require('./assets/white.jpeg')}>
+        <Find
+          ref={ref => (refSearchBox = ref)}
+          placeholder={'Pesquisar...'}
+          searchIconColor={state.searchIconColor}
+          onClosed={() => setState({searchIconColor: '#fff'})}
+          onOpening={() => setState({searchIconColor: '#555'})}
+        />
+
         <View style={styles.buttonsArea}>
-          <View style={styles.rows}>
-            <TouchableOpacity style={styles.buttonContainer}>
-              <Text style={styles.textButton}>Abrir</Text>
+          <View style={styles.row}>
+            <TouchableOpacity
+              style={styles.buttonContainer}
+              onPress={openSearchBox}>
+              <Text style={styles.buttonText}>ABRIR</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.buttonContainer}>
-              <Text style={styles.textButton}>Fechar</Text>
+
+            <TouchableOpacity
+              style={styles.buttonContainer}
+              onPress={closeSearchBox}>
+              <Text style={styles.buttonText}>FECHAR</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -35,43 +61,42 @@ const App: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  default: {
+  container: {
     flex: 1,
   },
-  imageBG: {
+  bgImage: {
     flex: 1,
-    justifyContent: 'center',
     resizeMode: 'cover',
-    paddingTop: 62,
-    paddingBottom: 42,
-  },
-  buttonContainer: {
-    flex: 1,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 10,
-    borderRadius: 20,
-  },
-  textButton: {
-    fontWeight: 'bold',
-    fontSize: 18,
-    color: '#555',
+    paddingTop: 15,
+    paddingLeft: 15,
+    paddingRight: 15,
   },
   buttonsArea: {
     flex: 1,
+    marginBottom: 15,
     justifyContent: 'flex-end',
-    marginBottom: 10,
   },
-  rows: {
+  row: {
     flex: 1,
     justifyContent: 'center',
     flexDirection: 'row',
+    marginLeft: -10,
+    marginRight: -10,
     maxHeight: 50,
+    marginTop: 5,
   },
-  findComponent: {
-    backgroundColor: '#fff',
-    borderRadius: 22,
+  buttonContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.80)',
+    margin: 10,
+    height: 40,
+    borderRadius: 40,
+  },
+  buttonText: {
+    fontWeight: 'bold',
+    color: '#555',
   },
 });
 
