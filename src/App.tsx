@@ -17,7 +17,7 @@ const App: React.FC = () => {
         style={styles.imageBG}
         source={require('./Assets/Image/white.jpeg')}>
         <View style={styles.findComponent}>
-          <Find height={100} />
+          <Find height={200} />
         </View>
         <View style={styles.buttonsArea}>
           <View style={styles.rows}>
@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     resizeMode: 'cover',
+    paddingTop: 62,
     paddingBottom: 42,
   },
   buttonContainer: {

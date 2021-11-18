@@ -18,17 +18,27 @@ interface ISearch {
 
 interface ISearchComponent {
   height: number;
+  width?: number;
   borderRadius?: number;
   searchIconColor?: string;
+  shadowColor?: string;
+  backgroundColor: string;
+  fontSize: number;
+  paddingLeft: number;
+  placeholder: string;
 }
 
 const Find: React.FC<ISearchComponent> = ({
   height,
-  // borderRadius,
-  // searchIconColor,
+  shadowColor,
+  backgroundColor,
+  borderRadius,
+  fontSize,
+  paddingLeft,
+  placeholder,
 }) => {
   const [search, setSearch] = useState<ISearch>({
-    width: 100,
+    width: 0,
     textInputAnimation: new Animated.Value(1),
     parentViewedAnimation: new Animated.Value(height),
     iconSize: 40,
@@ -81,7 +91,21 @@ const Find: React.FC<ISearchComponent> = ({
           searchIconColorComponent="blue"
           searchIconSize={search.iconSize}
         />
-        <TextInput style={styles.searchInput} />
+        <TextInput
+          placeholderTextColor=""
+          placeholder={placeholder}
+          style={[
+            styles.searchInput,
+            {
+              shadowColor: shadowColor,
+              backgroundColor: backgroundColor,
+              height: height,
+              borderRadius: borderRadius,
+              fontSize: fontSize,
+              paddingLeft: paddingLeft,
+            },
+          ]}
+        />
       </Animated.View>
     </View>
   );
@@ -113,6 +137,10 @@ Find.defaultProps = {
   height: 48,
   borderRadius: 30,
   searchIconColor: '#555',
+  shadowColor: 'rgba(0,0,0,0.12)',
+  backgroundColor: 'rgba(255,255,255,0.7)',
+  fontSize: 18,
+  paddingLeft: 22,
 };
 
 export default Find;
