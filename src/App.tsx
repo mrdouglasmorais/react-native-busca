@@ -16,7 +16,9 @@ const App: React.FC = () => {
       <ImageBackground
         style={styles.imageBG}
         source={require('./Assets/Image/white.jpeg')}>
-        <Find />
+        <View style={styles.findComponent}>
+          <Find height={100} />
+        </View>
         <View style={styles.buttonsArea}>
           <View style={styles.rows}>
             <TouchableOpacity style={styles.buttonContainer}>
@@ -65,6 +67,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'row',
     maxHeight: 50,
+  },
+  findComponent: {
+    backgroundColor: '#fff',
+    borderRadius: 22,
   },
 });
 
